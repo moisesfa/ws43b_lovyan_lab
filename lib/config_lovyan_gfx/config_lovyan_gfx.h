@@ -1,8 +1,5 @@
 #pragma once
 
-void LgfxInit(void);
-void LgfxDoTouch(void);
-
 #define LGFX_USE_V1
 #include <LovyanGFX.hpp>
 #include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
@@ -16,6 +13,9 @@ void LgfxDoTouch(void);
 #define TOUCH_SCL 9
 #define TOUCH_INT 4
 #define TOUCH_RST -1
+
+void lovyangfx_init(void);
+void LgfxDoTouch(void);
 
 class LGFX : public lgfx::LGFX_Device {
 public:

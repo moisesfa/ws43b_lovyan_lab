@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "expander.h"
-#include "lovgfx.h"
+#include "config_lovyan_gfx.h"
 
 bool GFXinitOK = false;
 
@@ -13,12 +13,13 @@ void setup() {
 
   delay(200);
   ExpanderInit();
-  LgfxInit();
+  lovyangfx_init();
   Serial.println("Lgfx initialised");
   
 }
 
 void loop() {
-  LgfxDoTouch();
-  delay(5);
+  
+  // LgfxDoTouch();
+  // delay(5);
 }

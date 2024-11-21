@@ -8,8 +8,10 @@ Casi toda la información la encuentro en este gran canal [Volos Projects](https
 ## Primeros pasos
 
 - [x] Puesta en marcha de la librería
-- [ ] Fuentes personalizadas
-- [ ] Gestos en la pantalla táctil
+- [x] Fuentes personalizadas
+- [x] Usar FreeRTOS 
+- [x] Gestos en la pantalla táctil
+- [ ] Sprite 
  
 
 ## Resultado
