@@ -1,6 +1,8 @@
 #include <LovyanGFX.hpp>
 #include "config_lovyan_gfx.h"
 #include "screen_01.h"
+#include "screen_02.h"
+#include "screen_all.h"
 
 // Creamos el objeto
 LGFX tft;
@@ -86,7 +88,7 @@ void taskShowGestureOnScreen(void* pvParameters) {
 
             //tft.setTextColor(TFT_WHITE);
             tft.setTextDatum(CC_DATUM);    
-            tft.setTextSize(2);
+            //tft.setTextSize(2);
             tft.setCursor(400, 100);
 
             switch (gesture) {
@@ -98,11 +100,13 @@ void taskShowGestureOnScreen(void* pvParameters) {
                     tft.drawString("Gesture: DOWN",400,150);
                     //tft.println("Gesture: DOWN");
                     break;
-                case LEFT:
+                 case LEFT:
+                    if(screen_number != 2) screen_02_view();
                     tft.drawString("Gesture: LEFT",400,150);
                     //tft.println("Gesture: LEFT");
                     break;
                 case RIGHT:
+                    if(screen_number != 1) screen_01_view();
                     tft.drawString("Gesture: RIGHT",400,150);
                     //tft.println("Gesture: RIGHT");
                     break;
@@ -128,7 +132,8 @@ void lovyangfx_init() {
   // Crear cola para los gestos
     gestureQueue = xQueueCreate(5, sizeof(Gesture));
     if (gestureQueue == NULL) {
-        tft.println("Error al crear cola");
+        Serial.println("Error al crear cola");
+        //tft.println("Error al crear cola");
         while (true); // Detener en caso de error
     }
 

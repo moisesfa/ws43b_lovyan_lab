@@ -11,7 +11,7 @@ Casi toda la información la encuentro en este gran canal [Volos Projects](https
 - [x] Fuentes personalizadas
 - [x] Usar FreeRTOS 
 - [x] Gestos en la pantalla táctil
-- [ ] Sprite 
+- [x] Sprite inicio
  
 
 ## Resultado

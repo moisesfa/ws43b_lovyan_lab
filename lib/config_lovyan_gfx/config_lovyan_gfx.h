@@ -63,7 +63,7 @@ public:
       cfg.pin_vsync = 3;
       cfg.pin_hsync = 46;
       cfg.pin_pclk = 7;
-      cfg.freq_write = 16000000;
+      cfg.freq_write = 14000000;
 
       cfg.hsync_polarity = 0;
       cfg.hsync_front_porch = 8;
