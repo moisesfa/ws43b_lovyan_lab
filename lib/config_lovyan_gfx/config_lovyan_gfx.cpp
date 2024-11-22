@@ -13,6 +13,9 @@ LGFX tft;
 
 // Cola para comunicar gestos
 QueueHandle_t gestureQueue;
+// Cola para comunicar hora 
+QueueHandle_t timeQueue;
+
 // Enumeración para almacenar gestos
 enum Gesture { NONE, UP, DOWN, LEFT, RIGHT };
 // Estructura para almacenar coordenadas
@@ -75,50 +78,89 @@ void taskReadTouchAndDetectGesture(void* pvParameters) {
     }
 }
 
-// Tarea para mostrar gestos en la pantalla
-void taskShowGestureOnScreen(void* pvParameters) {
+// Tarea para gestionar los gestos 
+void taskManagementGesture(void* pvParameters) {
     Gesture gesture;
 
     while (true) {
         // Recibir datos de la cola
         if (xQueueReceive(gestureQueue, &gesture, portMAX_DELAY)) {
-            //tft.fillScreen(TFT_BLACK); // Limpiar la pantalla
-            // Borrar solo el área del texto usando un rectángulo
-            tft.fillRect(200, 100, 400, 100, 0x003030);
-
-            //tft.setTextColor(TFT_WHITE);
-            tft.setTextDatum(CC_DATUM);    
-            //tft.setTextSize(2);
-            tft.setCursor(400, 100);
-
             switch (gesture) {
                 case UP:
-                    tft.drawString("Gesture: UP",400,150);
-                    //tft.println("Gesture: UP");
+                    Serial.println("Gesture: UP");
                     break;
                 case DOWN:
-                    tft.drawString("Gesture: DOWN",400,150);
-                    //tft.println("Gesture: DOWN");
+                    Serial.println("Gesture: DOWN");
                     break;
                  case LEFT:
                     if(screen_number != 2) screen_02_view();
-                    tft.drawString("Gesture: LEFT",400,150);
-                    //tft.println("Gesture: LEFT");
+                    Serial.println("Gesture: LEFT");
                     break;
                 case RIGHT:
                     if(screen_number != 1) screen_01_view();
-                    tft.drawString("Gesture: RIGHT",400,150);
-                    //tft.println("Gesture: RIGHT");
+                    Serial.println("Gesture: RIGHT");
                     break;
                 case NONE:
                 default:
-                    //tft.println("No gesture");
                     break;
             }
         }
     }
 }
 
+void taskManagementTime(void* pvParameters){
+
+  static int32_t hour = 0;
+  static int32_t minute = 0;
+  static int32_t second = 0;  
+  
+  while (1)
+  {
+    second++;
+    if (second > 59)
+    {
+      second = 0;
+      minute++;
+      if (minute > 59)
+      {
+        minute = 0;
+        hour++;
+        if (hour > 23)
+        {
+          hour = 0;
+        }
+      }
+    }
+
+    String hour_time_f = (hour < 10) ? "0" + String(hour) : String(hour);
+    String minute_time_f = (minute < 10) ? "0" + String(minute) : String(minute);
+    String second_time_f = (second < 10) ? "0" + String(second) : String(second);
+
+    String final_time_str = String(hour_time_f) + ":" + String(minute_time_f) + ":" + String(second_time_f);
+    //Serial.println(final_time_str);
+    const char *mensaje = final_time_str.c_str(); // Convierte a const char*
+    if (xQueueSend(timeQueue, &mensaje, pdMS_TO_TICKS(1000)) == pdPASS) {
+        Serial.printf("Mensaje enviado: %s\n", final_time_str);
+    } else {
+        Serial.printf("Error: Cola llena.\n");
+    }
+    vTaskDelay(pdMS_TO_TICKS(1000));
+   
+  }
+}
+
+void taskShowTimeOnScreen(void* pvParameters){
+    char *mensajeRecibido;
+    while (true) {
+        if (xQueueReceive(timeQueue, &mensajeRecibido,pdMS_TO_TICKS(1000)) == pdPASS) {
+            Serial.printf("Mensaje recibido: %s\n", mensajeRecibido);
+            if(screen_number == 1) screen_01_view_time(mensajeRecibido);
+        } else {
+            Serial.printf("Error: No se recibió ningún mensaje.\n");
+        }
+         vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
 
 void lovyangfx_init() {
   Serial.println("Lgfx init...");
@@ -136,10 +178,19 @@ void lovyangfx_init() {
         //tft.println("Error al crear cola");
         while (true); // Detener en caso de error
     }
+    
+    // Crear cola con capacidad para 5 elementos del tamaño de un puntero
+    timeQueue = xQueueCreate(5, sizeof(char *));
+    if (timeQueue == NULL) {
+        Serial.println("Error al crear cola");
+        while (true); // Detener en caso de error
+    }
 
     // Crear tareas FreeRTOS
     xTaskCreate(taskReadTouchAndDetectGesture, "TaskReadTouchAndDetectGesture", 1024*2, NULL, 1, NULL);
-    xTaskCreate(taskShowGestureOnScreen, "TaskShowGestureOnScreen", 1023*2, NULL, 1, NULL);
+    xTaskCreate(taskManagementGesture, "TaskManagementGesture", 1024*2, NULL, 1, NULL);
+    xTaskCreate(taskShowTimeOnScreen, "TaskShowTimeOnScreen", 1024*2, NULL, 1, NULL);
+    xTaskCreate(taskManagementTime, "TaskManagementTime", 1024*2, NULL, 1, NULL);
 }
 
 // Only if GFX does the touch handling

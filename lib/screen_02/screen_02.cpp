@@ -25,6 +25,5 @@ void screen_02_view(void)
     //tft.setFont(&fonts::DejaVu72);
     tft.setTextDatum(CC_DATUM);
     tft.drawString("SC-02",400,300);
-    tft.setFont(&fonts::DejaVu40);
     draw_sprite_sel_screen(2);
 }

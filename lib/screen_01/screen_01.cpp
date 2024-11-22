@@ -10,6 +10,7 @@ const char* title_01 = "Title SC-01";
 
 extern LGFX tft;
 static LGFX_Sprite sprite_info_wifi(&tft);
+static LGFX_Sprite sprite_info_time(&tft);
 
 void drawDirectBackground(void);
 void draw_sprite_info_wifi(void);
@@ -33,10 +34,24 @@ void screen_01_view(void)
     //tft.setFont(&fonts::DejaVu72);
     tft.setTextDatum(CC_DATUM);
     tft.drawString("SC-01",400,300);
-    tft.setFont(&fonts::DejaVu40);
     draw_sprite_info_wifi();
     draw_sprite_sel_screen(1);
 
+}
+
+void screen_01_view_time(char *mensajeRecibido)
+{
+    //sprite_info_time.createSprite(40, 220, 720, 140, TFT_BLUE);
+    sprite_info_time.createSprite(WIDTH_SPRT_INFO_TIME, HEIGHT_SPRT_INFO_TIME);
+    sprite_info_time.fillSprite(0x003030);
+    //sprite_info_time.fillSprite(TFT_RED);
+    //sprite_info_time.fillRoundRect(0,0,WIDTH_SPRT_INFO_TIME, HEIGHT_SPRT_INFO_TIME, 40,TFT_DARKGREEN);
+
+    sprite_info_time.setFont(&AlibabaSans_Bold80pt7b);
+    sprite_info_time.setTextColor(TFT_GREEN);
+    sprite_info_time.setTextDatum(CC_DATUM);
+    sprite_info_time.drawString(mensajeRecibido,WIDTH_SPRT_INFO_TIME/2,HEIGHT_SPRT_INFO_TIME/2+8);
+    sprite_info_time.pushSprite(40,220);
 }
 
 void drawDirectBackground(void)
