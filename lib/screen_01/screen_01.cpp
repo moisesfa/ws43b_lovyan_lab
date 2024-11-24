@@ -39,7 +39,7 @@ void screen_01_view(void)
 
 }
 
-void screen_01_view_time(char *mensajeRecibido)
+void screen_01_view_time(String mensajeRecibido)
 {
     //sprite_info_time.createSprite(40, 220, 720, 140, TFT_BLUE);
     sprite_info_time.createSprite(WIDTH_SPRT_INFO_TIME, HEIGHT_SPRT_INFO_TIME);
